@@ -3,8 +3,8 @@ import { onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
 import { Loading } from "@/components";
 import { useAuthStore } from "@/store/auth";
-import LoginImage from "@/assets/images/png/login-image.png";
-import LogoIcon from "@/assets/images/svg/login-logo.svg";
+import LoginImage from "@/assets/images/png/login-image.webp";
+import LogoIcon from "@/assets/icons/logo.svg";
 
 const router=useRouter()
 const isLoading = ref(true)
