@@ -102,10 +102,22 @@ const handleReject = (record: any) => {
     :drawer-text="currentText"
     @close="isDrawerOpen = false"
     @success="handleSuccess"
+    class="custom-drawer"
   />
 </template>
 
 <style scoped>
+
+.custom-drawer .ant-drawer-content-wrapper {
+  width: 520px !important;
+}
+
+/* Tablet */
+@media (max-width: 1024px) {
+  .custom-drawer .ant-drawer-content-wrapper {
+    width: 360px !important;
+  }
+}
 .roles-content {
   border: 1px solid #e9eaeb;
   box-shadow: 0px 1px 2px 0px #0a0d120d;

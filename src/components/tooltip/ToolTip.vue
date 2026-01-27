@@ -9,11 +9,12 @@ defineProps<{
 </script>
 
 <template>
+  <Teleport to="body">
   <div
     class="region-tooltip"
     :style="{
-      left: x + 12 + 'px',
-      top: y + 12 + 'px'
+      left: x  + 'px',
+      top: y  + 'px'
     }"
   >
     <h4 class="tooltip-title">{{ region.name }}</h4>
@@ -28,22 +29,29 @@ defineProps<{
       <span class="value" >{{ info.value }}</span>
     </div>
   </div>
+
+  </Teleport>
+
 </template>
 
 <style scoped>
 .region-tooltip {
   position: fixed;
-  width: 250px;
+  width: 240px;
   border-radius: 12px;
   box-shadow: 0px 4px 26.7px 0px #00000040;
   z-index: 999;
   pointer-events: none;
+  background: #F5F5F5;
 }
+
 .tooltip-title {
   font-weight: 500;
-  /* background: #F5F5F5; */
-  padding: 8px 0;
+  background: #F5F5F5;
+  border-bottom: 2px solid #E9EAEB;
+  padding: 8px 16px;
   font-size: 16px;
+  border-radius: 12px 12px 0 0;
 }
 .tooltip-row {
   display: flex;
@@ -51,6 +59,7 @@ defineProps<{
   gap: 8px;
   font-size: 12px;
   margin-top: 8px;
+  margin: 8px 16px;
 }
 
 .dot {

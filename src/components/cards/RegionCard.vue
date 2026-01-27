@@ -12,8 +12,8 @@ const tooltipPos = ref({ x: 0, y: 0 });
 const updateRegion = (payload: { id: number | null; x: number; y: number }) => {
   activeId.value = payload.id;
   tooltipPos.value = {
-    x: payload.x-20,
-    y: payload.y-200,
+    x: payload.x-120,
+    y: payload.y-180,
   };
 
 
@@ -67,40 +67,6 @@ const activeRegion = computed(() => {
   flex-direction: column;
   align-items: center;
   height: 100%;
-}
-
-.region-tooltip {
-  position: fixed; 
-  background: white;
-  padding: 12px;
-  border-radius: 8px;
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-  z-index: 9999;
-  pointer-events: none; /* Sichqoncha tooltip ustiga kelib qolsa hover yo'qolmasligi uchun */
-  min-width: 150px;
-}
-
-.tooltip-title {
-  margin-bottom: 12px;
-  font-weight: 500;
-  font-size: 14px;
-  color: #000;
-  background: #f5f5f5;
-  border-bottom: 1px solid #e9eaeb;
-}
-
-.tooltip-row {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 6px;
-  font-size: 13px;
-}
-
-.dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
 }
 
 @media screen and (max-width:1500px) {

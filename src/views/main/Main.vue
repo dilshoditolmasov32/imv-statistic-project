@@ -200,7 +200,7 @@ const {
   padding: 24px;
   flex: 1;
   border-radius: 1rem;
-  margin-bottom: 20px;
+  margin-bottom: 32px;
 }
 
 .bottom-cards-grid {

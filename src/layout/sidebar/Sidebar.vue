@@ -9,7 +9,7 @@ const authStore = useAuthStore();
 
 const emit = defineEmits(["toggle"]);
 const toggleSidebar = () => {
-  router.push("main")
+  router.push("/")
 };
 
 const props = defineProps({
