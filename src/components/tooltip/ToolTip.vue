@@ -42,11 +42,12 @@ defineProps<{
   box-shadow: 0px 4px 26.7px 0px #00000040;
   z-index: 999;
   pointer-events: none;
-  background: #F5F5F5;
+  background-color: #F5F5F5;
 }
 
 .tooltip-title {
   font-weight: 500;
+  color: #000;
   background: #F5F5F5;
   border-bottom: 2px solid #E9EAEB;
   padding: 8px 16px;
@@ -74,5 +75,6 @@ defineProps<{
 
 .value{
   font-weight: 700;
+  color:#000
 }
 </style>
