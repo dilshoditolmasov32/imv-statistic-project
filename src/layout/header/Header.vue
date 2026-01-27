@@ -45,11 +45,11 @@ const closeSearch = () => {
     <div class="header-time">
 
       <button v-if="isSidebarOpen" class="toggle-btn" @click="toggleSidebar">
-<AnOutlinedMenuFold style="font-size: 32px; color:#000"/>
+<AnOutlinedMenuFold style="font-size: 28px; color:#000"/>
        
       </button>
       <button class="toggle-btn" v-else @click="toggleSidebar">
-       <AnOutlinedMenuUnfold style="font-size: 32px; color:#000"/>
+       <AnOutlinedMenuUnfold style="font-size: 28px; color:#000"/>
       </button>
       <useTimerDate />
     </div>
