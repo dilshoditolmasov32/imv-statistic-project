@@ -22,7 +22,9 @@
   font-weight: 500;
   text-align: center;
   text-transform: capitalize;
+  color: #414651;
 }
+
 svg {
   width: 3.25em;
   transform-origin: center;
