@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@iconify/vue": "^5.0.0",
+    "@kalimahapps/vue-icons": "^1.9.5",
     "@primeuix/themes": "^2.0.2",
     "@radix-ui/colors": "^3.0.0",
     "ant-design-vue": "^4.0.0-rc.6",

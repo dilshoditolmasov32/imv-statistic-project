@@ -138,6 +138,10 @@ const exportToExcel = () => {
   font-size: 15px;
 }
 
+.button-filter span{
+  color: #414651;
+}
+
 .organization-title {
   margin-bottom: 12px;
   font-size: 22px;

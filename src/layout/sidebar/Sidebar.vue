@@ -66,20 +66,14 @@ const menuItems = computed(() => {
 </template>
 <style scoped>
 .sidebar {
-  height: 100vh;
   background-color: #0c0e12;
   color: #cecfd2;
   transition: width 0.3s ease;
-  width: 296px;
   display: flex;
   flex-direction: column;
-  position: fixed;
-  z-index: 9999;
 }
 
-.sidebar.collapsed {
-  width: 90px;
-}
+
 
 .logo-section {
   display: flex;

@@ -148,6 +148,10 @@ const handleDelete = (id: number) => {
   font-weight: 600;
 }
 
+.button-filter span{
+  color: #414651;
+}
+
 .request-title {
   margin-bottom: 12px;
   font-size: 22px;

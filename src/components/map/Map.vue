@@ -213,6 +213,11 @@ const regionHover = (id: number | null, event?: MouseEvent) => {
 </template>
 
 <style scoped>
+
+.map-container{
+  width: 100%;
+  height: auto;
+}
 .map-container svg path {
   cursor: pointer;
   transition: fill 0.3s ease, stroke 0.3s ease;

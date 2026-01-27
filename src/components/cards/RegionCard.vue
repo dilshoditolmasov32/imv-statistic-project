@@ -60,8 +60,13 @@ const activeRegion = computed(() => {
 }
 
 .card-content {
-  padding: 50px 24px;
+  padding: 0 24px;
   background: #f5f5f5;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  height: 100%;
 }
 
 .region-tooltip {

@@ -18,8 +18,6 @@ const {
   jobRequestCards,
   internshipCards,
 } = useDashboardData();
-
-
 </script>
 
 <template>
@@ -34,17 +32,36 @@ const {
         <div class="requirement-statistic">
           <h2 class="section-title">Ehtiyoj bo'yicha statistika</h2>
           <div class="stats-grid">
-            <StatCard v-for="card in statsCards" :key="card.id" :title="card.title" :value="card.value"
-              :change="card.change" :icon="card.icon" :color="card.color" :bg-color="card.bgColor" />
+            <StatCard
+              v-for="card in statsCards"
+              :key="card.id"
+              :title="card.title"
+              :value="card.value"
+              :change="card.change"
+              :icon="card.icon"
+              :color="card.color"
+              :bg-color="card.bgColor"
+            />
           </div>
         </div>
 
         <section class="order-cards">
-          <TopBuyersCard :title="topBuyers.title" :value="topBuyers.value" :change="topBuyers.change"
-            :label="topBuyers.label" :detail="topBuyers.detail" />
+          <TopBuyersCard
+            :title="topBuyers.title"
+            :value="topBuyers.value"
+            :change="topBuyers.change"
+            :label="topBuyers.label"
+            :detail="topBuyers.detail"
+          />
           <div class="additional-stats-grid">
-            <AdditionalStatCard v-for="(stat, index) in additionalStats" :key="index" :title="stat.title"
-              :value="stat.value" :change="stat.change" :is-positive="stat.isPositive" />
+            <AdditionalStatCard
+              v-for="(stat, index) in additionalStats"
+              :key="index"
+              :title="stat.title"
+              :value="stat.value"
+              :change="stat.change"
+              :is-positive="stat.isPositive"
+            />
           </div>
         </section>
       </div>
@@ -61,16 +78,30 @@ const {
       <div class="workers--statistic">
         <h2 class="section-title">Bitiruvchi talabalar bo'yicha statistika</h2>
         <div class="bottom-cards-grid">
-          <BottomInfoCard v-for="card in jobRequestCards" :key="card.id" :title="card.title"
-            :description="card.description" :icon="card.icon" :color="card.color" :bg-color="card.bgColor" />
+          <BottomInfoCard
+            v-for="card in jobRequestCards"
+            :key="card.id"
+            :title="card.title"
+            :description="card.description"
+            :icon="card.icon"
+            :color="card.color"
+            :bg-color="card.bgColor"
+          />
         </div>
       </div>
 
       <div class="bottom-cards">
         <h2 class="section-title">Mehnat resurslari bo'yicha statistika</h2>
         <div class="bottom-cards-grid">
-          <BottomInfoCard v-for="card in internshipCards" :key="card.id" :title="card.title"
-            :description="card.description" :icon="card.icon" :color="card.color" :bg-color="card.bgColor" />
+          <BottomInfoCard
+            v-for="card in internshipCards"
+            :key="card.id"
+            :title="card.title"
+            :description="card.description"
+            :icon="card.icon"
+            :color="card.color"
+            :bg-color="card.bgColor"
+          />
         </div>
       </div>
     </section>
@@ -126,6 +157,7 @@ const {
 }
 
 .dashboard-right {
+ 
   max-width: 55rem;
   width: 100%;
   flex: 1;

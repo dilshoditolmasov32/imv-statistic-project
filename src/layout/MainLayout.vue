@@ -5,15 +5,22 @@ import Sidebar from "./sidebar/Sidebar.vue";
 const isSidebarOpen = ref(true);
 
 const handleSidebarToggle = () => {
+  console.log("LAYOUT: toggle qabul qilindi");
   isSidebarOpen.value = !isSidebarOpen.value;
 };
 </script>
 
 <template>
-  <div class="main-layout">
-    <Sidebar :is-open="isSidebarOpen" @toggle="handleSidebarToggle" />
-    <div class="content" :class="{ collapsed: !isSidebarOpen }">
-      <Header />
+  <div
+    class="main-layout"
+    :class="{ collapsed: !isSidebarOpen }"
+  >
+    <aside class="sidebar">
+      <Sidebar :isOpen="isSidebarOpen" />
+    </aside>
+
+    <div class="content">
+      <Header @toggle="handleSidebarToggle" :isSidebarOpen="isSidebarOpen" />
       <main class="main-section">
         <router-view />
       </main>
@@ -21,24 +28,40 @@ const handleSidebarToggle = () => {
   </div>
 </template>
 
+
 <style scoped>
 .main-layout {
-  display: flex;
-  position: relative;
-}
-
-.content {
+  display: grid;
+  grid-template-columns: 296px 1fr;
+  min-height: 100vh;
   width: 100%;
-  margin-left: 296px;
-  transition: margin-left 0.3s ease;
+  overflow: hidden;
+  transition: grid-template-columns 0.3s ease;
 }
 
-.content.collapsed {
-  margin-left: 90px;
+/* 🔥 ASOSIY YECHIM */
+.main-layout.collapsed {
+  grid-template-columns: 90px 1fr;
+}
+
+/* Sidebar */
+.sidebar {
+  height: 100vh;
+  overflow: hidden;
+  width: 100%;
+}
+
+/* Content */
+.content {
+  display: flex;
+  flex-direction: column;
+  min-width: 0; /* 🔥 juda muhim */
 }
 
 .main-section {
+  flex: 1;
   padding: 32px;
-  flex-grow: 1;
+  overflow-x: auto;
 }
+
 </style>
