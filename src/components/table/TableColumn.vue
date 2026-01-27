@@ -106,12 +106,11 @@ const emit = defineEmits<{
   background-color: #e9eaeb;
 }
 
-/* Jadvalning asosiy qismi (body) uchun */
 :deep(.ant-table-tbody > tr > td) {
   font-weight: 400;
   font-size: 15px;
   color: #535862;
-  /* padding: 7px 24px; */
+  padding: 7px 24px;
 }
 
 :deep(.ant-table-thead > tr > th) {
@@ -134,6 +133,7 @@ const emit = defineEmits<{
   border-radius: 8px;
   font-size: 16px;
   transition: all 0.3s ease;
+  white-space: nowrap;
 }
 
 .confirm-btn,
@@ -173,5 +173,16 @@ const emit = defineEmits<{
   border: 1px solid #fecdca;
   color: #b42318;
   background: #fef3f2;
+}
+
+@media screen and (max-width:1500px) {
+  .confirm-btn,
+.reject-btn {
+  padding: 6px 10px;
+  font-size: 12px;
+  border-radius: 6px;
+  
+}
+  
 }
 </style>
