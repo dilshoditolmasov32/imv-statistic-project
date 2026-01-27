@@ -1,32 +1,39 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
 import Header from "./header/Header.vue";
 import Sidebar from "./sidebar/Sidebar.vue";
+import Loading from "@/components/loading/Loading.vue";
 const isSidebarOpen = ref(true);
+const globalLoading = ref(true);
 
 const handleSidebarToggle = () => {
   isSidebarOpen.value = !isSidebarOpen.value;
 };
+
+onMounted(() => {
+  setTimeout(() => {
+    globalLoading.value = false;
+  }, 1500);
+});
 </script>
 
 <template>
-  <div
-    class="main-layout"
-    :class="{ collapsed: !isSidebarOpen }"
-  >
-    <aside class="sidebar">
-      <Sidebar :isOpen="isSidebarOpen" />
-    </aside>
+  <Transition name="fade" mode="out-in">
+    <Loading v-if="globalLoading"/>
+    <div class="main-layout" :class="{ collapsed: !isSidebarOpen }" v-else>
+      <aside class="sidebar">
+        <Sidebar :isOpen="isSidebarOpen" />
+      </aside>
 
-    <div class="content">
-      <Header @toggle="handleSidebarToggle" :isSidebarOpen="isSidebarOpen" />
-      <main class="main-section">
-        <router-view />
-      </main>
+      <div class="content">
+        <Header @toggle="handleSidebarToggle" :isSidebarOpen="isSidebarOpen" />
+        <main class="main-section">
+          <router-view />
+        </main>
+      </div>
     </div>
-  </div>
+  </Transition>
 </template>
-
 
 <style scoped>
 .main-layout {
@@ -51,7 +58,7 @@ const handleSidebarToggle = () => {
 .content {
   display: flex;
   flex-direction: column;
-  min-width: 0; 
+  min-width: 0;
   height: 100vh;
 }
 
@@ -60,5 +67,4 @@ const handleSidebarToggle = () => {
   padding: 32px;
   overflow-x: auto;
 }
-
 </style>
