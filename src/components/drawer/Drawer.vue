@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { ref } from "vue";
+import { ref, computed, onMounted, onUnmounted } from "vue";
 import SearchInput from "../search-input/Search.vue";
 import closeIcon from "@assets/icons/closeIcon.svg";
 defineProps({
@@ -27,12 +27,32 @@ const emit = defineEmits(["close", "success"]);
 const handleSubmit = () => {
   emit("success");
 };
+
+const screenWidth = ref(window.innerWidth);
+
+const handleResize = () => {
+  screenWidth.value = window.innerWidth;
+};
+
+onMounted(() => {
+  window.addEventListener("resize", handleResize);
+});
+
+onUnmounted(() => {
+  window.removeEventListener("resize", handleResize);
+});
+
+const drawerWidth = computed(() => {
+  if (screenWidth.value < 1400) return 420;   
+  return 560;                                
+});
+
 </script>
 
 <template>
   <a-drawer
     :open="isOpen"
-    :width="width"
+    :width="drawerWidth"
     placement="right"
     @close="$emit('close')"
     :maskStyle="{background:'#00000066', height:'100vh'}"
