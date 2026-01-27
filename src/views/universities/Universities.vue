@@ -119,6 +119,10 @@ const exportToExcel = () => {
   font-weight: 600;
 }
 
+.button-filter span{
+  color: #414651;
+}
+
 .add-button {
   background: #17b26a;
   color: #fff;

@@ -241,6 +241,11 @@ const handleDelete = (id: number) => {
   color: #000;
 }
 
+.button-filter span{
+  color: #414651;
+}
+
+
 .pagination-footer {
   margin: 12px 24px 16px;
 }

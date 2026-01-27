@@ -5,7 +5,6 @@ import Sidebar from "./sidebar/Sidebar.vue";
 const isSidebarOpen = ref(true);
 
 const handleSidebarToggle = () => {
-  console.log("LAYOUT: toggle qabul qilindi");
   isSidebarOpen.value = !isSidebarOpen.value;
 };
 </script>
@@ -39,23 +38,21 @@ const handleSidebarToggle = () => {
   transition: grid-template-columns 0.3s ease;
 }
 
-/* 🔥 ASOSIY YECHIM */
 .main-layout.collapsed {
   grid-template-columns: 90px 1fr;
 }
 
-/* Sidebar */
 .sidebar {
   height: 100vh;
   overflow: hidden;
   width: 100%;
 }
 
-/* Content */
 .content {
   display: flex;
   flex-direction: column;
-  min-width: 0; /* 🔥 juda muhim */
+  min-width: 0; 
+  height: 100vh;
 }
 
 .main-section {

@@ -112,6 +112,7 @@ const {
 .dashboard-page {
   height: 100vh;
   background: #fff;
+  margin-bottom: 32px;
 }
 
 .dashboard-header {
@@ -157,7 +158,6 @@ const {
 }
 
 .dashboard-right {
- 
   max-width: 55rem;
   width: 100%;
   flex: 1;

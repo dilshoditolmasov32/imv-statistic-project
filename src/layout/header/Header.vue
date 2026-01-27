@@ -20,7 +20,6 @@ const props = defineProps<{
 
 
 const toggleSidebar = () => {
-  console.log("HEADER: toggle bosildi");
   emit("toggle");
 };
 
@@ -146,10 +145,7 @@ const closeSearch = () => {
   gap: 20px;
 }
 
-/* .toggle-btn{
-  position: absolute;
-  left: 0;
-} */
+
 .header-layout {
   display: flex;
   justify-content: space-between;
@@ -163,6 +159,8 @@ const closeSearch = () => {
   z-index: 999;
   background: #fff;
   width: 100%;
+    border-bottom: 1px solid #e9eaeb;
+
 }
 
 .header-settings {
