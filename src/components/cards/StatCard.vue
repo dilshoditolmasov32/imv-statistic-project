@@ -76,6 +76,10 @@ defineProps<Props>();
   line-height: 1.4;
   color: #535862;
   font-weight: 600;
+   display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 .card-bottom {

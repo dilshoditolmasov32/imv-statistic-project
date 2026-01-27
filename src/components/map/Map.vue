@@ -223,14 +223,11 @@ const regionHover = (id: number | null, event?: MouseEvent) => {
   transition: fill 0.3s ease, stroke 0.3s ease;
   pointer-events: all;
 }
-
-/* Hover holati uchun */
 .map-container svg path:hover {
   fill: #079455 !important;
   stroke: #ffffff !important;
 }
 
-/* Faol hudud uchun (props orqali kelganda) */
 .map-container svg path.active {
   fill: #079455 !important;
   stroke: #ffffff !important;

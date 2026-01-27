@@ -75,7 +75,7 @@ const {
     </div>
 
     <section class="graduate-resources">
-      <div class="workers--statistic">
+      <div class="workers-statistic">
         <h2 class="section-title">Bitiruvchi talabalar bo'yicha statistika</h2>
         <div class="bottom-cards-grid">
           <BottomInfoCard
@@ -129,7 +129,6 @@ const {
   display: flex;
   align-items: stretch;
   width: 100%;
-  max-width: 100vw;
   overflow-x: hidden;
   gap: 24px;
 }
@@ -141,6 +140,7 @@ const {
   flex: 1;
   width: 100%;
   flex-shrink: 1;
+  height: auto;
 }
 
 .requirement-statistic {
@@ -158,10 +158,8 @@ const {
 }
 
 .dashboard-right {
-  max-width: 55rem;
   width: 100%;
   flex: 1;
-  width: 100%;
   top: 24px;
   flex-shrink: 0;
   height: auto;
@@ -196,12 +194,13 @@ const {
 }
 
 .bottom-cards,
-.workers--statistic {
+.workers-statistic {
   box-shadow: 0px 1px 2px 0px #0a0d120d;
   border: 1px solid #e9eaeb;
   padding: 24px;
   flex: 1;
   border-radius: 1rem;
+  margin-bottom: 20px;
 }
 
 .bottom-cards-grid {
@@ -210,15 +209,63 @@ const {
   gap: 16px;
 }
 
-.map-placeholder {
-  width: 100%;
-  height: 630px;
-  background: #f3f4f6;
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #9ca3af;
-  font-size: 14px;
+@media screen and (max-width: 1800px) {
+  .dashboard-content {
+    display: flex;
+    gap: 20px;
+  }
+
+  .dashboard-left {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .requirement-statistic {
+    padding: 18px;
+  }
+
+  .graduate-resources {
+    display: flex;
+    gap: 24px;
+    align-items: center;
+    margin-top: 20px;
+  }
+
+  .order-cards {
+    padding: 18px;
+  }
+
+  .bottom-cards-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+}
+
+@media screen and (max-width: 1500px) {
+  .dashboard-content {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+
+  }   
+
+  .bottom-cards,
+.workers-statistic {
+  padding: 16px;
+}
+
+.section-title {
+  font-size: 18px;
+}
+
+
+.bottom-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(1, 1fr);
+  gap: 16px;
+}
+
 }
 </style>

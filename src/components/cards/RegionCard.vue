@@ -60,7 +60,7 @@ const activeRegion = computed(() => {
 }
 
 .card-content {
-  padding: 0 24px;
+  padding: 20px 24px;
   background: #f5f5f5;
   display: flex;
   justify-content: center;
@@ -70,7 +70,7 @@ const activeRegion = computed(() => {
 }
 
 .region-tooltip {
-  position: fixed; /* Bodyga yoki konteynerga yopishib qolmasligi uchun */
+  position: fixed; 
   background: white;
   padding: 12px;
   border-radius: 8px;
@@ -102,4 +102,12 @@ const activeRegion = computed(() => {
   height: 8px;
   border-radius: 50%;
 }
+
+@media screen and (max-width:1500px) {
+  .card-content{
+    padding: 40px;
+  }
+}
+
+
 </style>

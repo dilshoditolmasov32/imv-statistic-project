@@ -56,11 +56,21 @@ defineProps<Props>();
   color: #111827;
   margin: 0 0 8px 0;
   line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 .info-card__description {
   font-size: 13px;
   color: #10b981;
   margin: 0;
+}
+
+@media screen and (max-width:1500px) {
+  .info-card{
+    padding: 12px;
+  }
 }
 </style>
