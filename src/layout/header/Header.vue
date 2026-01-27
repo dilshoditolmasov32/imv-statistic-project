@@ -185,6 +185,8 @@ const closeSearch = () => {
   outline: none;
   box-shadow: 0px 1px 2px 0px #0a0d120d;
   color: #000;
+  background: #fff;
+  font-size: 15px;
 }
 
 .search-input::placeholder {
