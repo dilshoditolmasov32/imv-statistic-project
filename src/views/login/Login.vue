@@ -2,13 +2,11 @@
 import { onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
 import { Loading } from "@/components";
-import { useAuthStore } from "@/store/auth";
 import LoginImage from "@/assets/images/png/login-image.webp";
 import LogoIcon from "@/assets/icons/logo.svg";
 
 const router=useRouter()
 const isLoading = ref(true)
-const authStore=useAuthStore()
 
 onMounted(() => {
   setTimeout(() => {
@@ -17,11 +15,7 @@ onMounted(() => {
 });
 
 const handleLogin=()=>{
-  localStorage.setItem("token", "fake-token-123");
-  localStorage.setItem("user", JSON.stringify({ role: "admin", name: "Admin" }));
-  authStore.token = "fake-token-123";
-  authStore.user = {id:1, role: "admin", name: "Admin" };
-    router.push("/")
+  router.push("/user-role")
 }
 
 </script>

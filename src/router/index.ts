@@ -10,6 +10,7 @@ import {
   CreateRequest,
   MyRequest,
 } from "@/views";
+import UserRoleForm from "@/components/form/UserRoleForm.vue";
 import { createRouter, createWebHistory } from "vue-router";
 import { useAuthStore } from "@/store/auth";
 import MainLayout from "@/layout/MainLayout.vue";
@@ -27,6 +28,12 @@ const routes = [
     path: "/login",
     name: "Login",
     component: Login,
+    meta: { showInSidebar: false, guestOnly: true },
+  },
+  {
+    path: "/user-role",
+    name: "UserRoleStateForm",
+    component: UserRoleForm,
     meta: { showInSidebar: false, guestOnly: true },
   },
   {

@@ -2,7 +2,6 @@
 <script setup>
 import { ref, computed } from 'vue';
 
-// Form data structure
 const formData = ref({
   educationCode: undefined,
   educationName: '',
@@ -17,25 +16,20 @@ const formData = ref({
   total: ''
 });
 
-// List of submitted applications
 const applications = ref([]);
 
-// Handle form submission
 const handleSubmit = () => {
-  // Validate required fields
   if (!formData.value.educationCode || !formData.value.educationName) {
     alert('Iltimos, majburiy maydonlarni to\'ldiring!');
     return;
   }
 
-  // Create application object
   const newApplication = {
     ...formData.value,
     createdDate: new Date().toLocaleDateString('uz-UZ'),
     id: Date.now()
   };
 
-  // Add to applications list
   applications.value.push(newApplication);
 
   // Reset form
