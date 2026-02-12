@@ -2,57 +2,71 @@
 import * as XLSX from "xlsx";
 import { computed, onMounted, ref } from "vue";
 import { TableColumn, SearchInput, Pagination, BreadCrumb } from "@/components";
-import { RequestTableData } from "@data/RequestTableData";
-import { RequestTableType } from "@/interface/RequestTableType";
+import { typeDirections, DirectionsResponse } from "@/interface/Directions";
+import { getDirectionsData } from "@/services/directions.service";
 import excelIcon from "@assets/icons/excel.svg";
 import filterIcon from "@assets/icons/filter.svg";
 
 const columns = [
-  { title: "№", dataIndex: "id", key: "id", align: "center" },
+  { title: "№", dataIndex: "id", key: "id", align: "center", width: "64px" },
   {
-    title: "Tashkilot nomi",
-    dataIndex: "organizationName",
-    key: "organizationName",
+    title: "Yo‘nalish nomi",
+    dataIndex: "name",
+    key: "name",
   },
 
-  { title: "Yo‘nalish shifri", dataIndex: "IDNumber", key: "IDNumber" },
-
+  { title: "Yo‘nalish shifri", dataIndex: "code", key: "code", width: "180px" },
 ];
-const search=ref("")
+
+const search = ref("");
 const page = ref(1);
-const pageSize = 12;
-const tableData = ref<RequestTableType[]>([...RequestTableData]);
+const pageSize = ref(10);
+const totalCount = ref(0);
+const directions = ref<typeDirections[]>([]);
 const isLoading = ref(false);
-onMounted(() => {
-  setTimeout(() => {
+
+const directionsData = async (currentPage = 1) => {
+  isLoading.value = true;
+  try {
+    const response:DirectionsResponse = await getDirectionsData(currentPage, pageSize.value);
+
+    directions.value = response.data;
+    totalCount.value = response.total_count;
+    pageSize.value = response.per_page;
+    page.value = response.current_page;
+  } catch (err) {
+    console.log("Xatolik bor:", err);
+    directions.value = [];
+  } finally {
     isLoading.value = false;
-  }, 1500);
+  }
+};
+
+
+onMounted(() => {
+  directionsData();
 });
 
 const filteredData = computed(() => {
-  if (!search.value) return tableData.value;
+  if (!search.value) return directions.value;
 
-  return tableData.value.filter(item =>
-    item.organizationName.toLowerCase().includes(search.value.toLowerCase())
+  return directions.value.filter((item) =>
+    item.name.toLowerCase().includes(search.value.toLowerCase())
   );
 });
 
 const paginatedData = computed(() => {
-  const start = (page.value - 1) * page.value;
-  const end = start + pageSize;
-  return filteredData.value.slice(start, end);
+  return filteredData.value;
 });
 
-const handleEdit = (record: any) => {
-  console.log("Tahrirlash uchun:", record);
+const handlePageChange = (newPage: number) => {
+  page.value = newPage;
+  directionsData(newPage);
 };
 
-const handleDelete = (id: number) => {
-  tableData.value = tableData.value.filter((item) => item.id !== id);
-};
 
 const exportToExcel = () => {
-  const worksheet = XLSX.utils.json_to_sheet(RequestTableData);
+  const worksheet = XLSX.utils.json_to_sheet(directions.value);
   const workbook = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(workbook, worksheet, "Specials");
   XLSX.writeFile(workbook, "specials.xlsx");
@@ -61,15 +75,15 @@ const exportToExcel = () => {
 
 <template>
   <div class="organization-page">
-      <BreadCrumb title="Ta’lim yo‘nalishlari" />
-  
+    <BreadCrumb title="Ta’lim yo‘nalishlari" />
+
     <h2 class="organization-title">Ta’lim yo‘nalishlari</h2>
     <div class="organization-content">
       <div class="organization-header">
         <div class="header-left">
           <SearchInput v-model="search" />
 
-          <button class="button-filter" >
+          <button class="button-filter">
             <img :src="filterIcon" alt="filter icon" />
             <span> Filtr </span>
           </button>
@@ -82,19 +96,17 @@ const exportToExcel = () => {
           </button>
         </div>
       </div>
-     <TableColumn
-      :data="paginatedData"
+      <TableColumn
+        :data="paginatedData"
         :columns="columns"
         :loading="isLoading"
-        @edit="handleEdit"
-        @delete="handleDelete"
       />
       <div class="pagination-footer">
         <Pagination
-          :total="tableData.length"
+          :total="totalCount"
           :page="page"
           :page-size="pageSize"
-          @update:page="page = $event"
+          @update:page="handlePageChange"
         />
       </div>
     </div>
@@ -138,7 +150,7 @@ const exportToExcel = () => {
   font-size: 15px;
 }
 
-.button-filter span{
+.button-filter span {
   color: #414651;
 }
 

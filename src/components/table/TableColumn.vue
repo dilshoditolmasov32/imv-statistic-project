@@ -13,20 +13,21 @@ const emit = defineEmits<{
   (e: "edit", record: any): void;
   (e: "delete", id: number): void;
 }>();
-
-
 </script>
 
 <template>
   <div class="table-container">
-    <Loading v-if="loading" />
+    <div v-if="loading" class="loading-overlay">
+      <Loading />
+    </div>
     <a-table
       :dataSource="data"
       :columns="columns"
       :pagination="false"
-      :class="{ 'is-loading': loading }"
+      :class="{ 'table-loading-blur': loading }"
       bordered
       rowKey="id"
+      :scroll="{ x: 1200 }"
     >
       <template #bodyCell="{ column, record }">
         <template v-if="column.key === 'actionState'">
@@ -63,14 +64,19 @@ const emit = defineEmits<{
               <img :src="record.buttons.editBtn" alt="edit" width="18" />
             </a-button>
 
-            <a-button
-              v-if="record.buttons?.deleteBtn"
-              type="link"
-              danger
-              @click="emit('delete', record.id)"
+            <a-popconfirm
+              placement="topRight"
+              title="Haqiqatdan ham o‘chirmoqchimisiz?"
+              ok-text="Ha"
+              cancel-text="Yo‘q"
+              ok-type="danger"
+              :icon="null"
+              @confirm="emit('delete', record.id)"
             >
-              <img :src="record.buttons.deleteBtn" alt="delete" width="18" />
-            </a-button>
+              <a-button v-if="record.buttons?.deleteBtn" type="link" danger>
+                <img :src="record.buttons.deleteBtn" alt="delete" width="18" />
+              </a-button>
+            </a-popconfirm>
           </div>
         </template>
       </template>
@@ -81,11 +87,28 @@ const emit = defineEmits<{
 <style scoped>
 .table-container {
   position: relative;
+  height: auto;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
-.is-loading {
-  opacity: 0.5;
-  pointer-events: none;
+.loading-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 100;
+  backdrop-filter: blur(2px); /* Effekt uchun */
+}
+
+.table-loading-blur {
+  filter: blur(1px); /* Yuklanayotganda ma'lumotlarni biroz xira qiladi */
+  pointer-events: none; /* Yuklanayotganda tugmalarni bosib bo'lmaydi */
 }
 
 .no-hover-change:hover {
@@ -100,6 +123,9 @@ const emit = defineEmits<{
   gap: 10px;
   justify-content: center;
   align-items: center;
+}
+:deep(.ant-table-body) {
+  overflow-y: auto !important;
 }
 
 :deep(.ant-table-thead > tr > th) {
@@ -175,14 +201,16 @@ const emit = defineEmits<{
   background: #fef3f2;
 }
 
-@media screen and (max-width:1500px) {
-  .confirm-btn,
-.reject-btn {
-  padding: 6px 10px;
-  font-size: 12px;
-  border-radius: 6px;
-  
+:deep(.ant-table-wrapper) {
+  height: 100%;
 }
-  
+
+@media screen and (max-width: 1500px) {
+  .confirm-btn,
+  .reject-btn {
+    padding: 6px 10px;
+    font-size: 12px;
+    border-radius: 6px;
+  }
 }
 </style>

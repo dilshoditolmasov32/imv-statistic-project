@@ -1,9 +1,11 @@
 <script setup lang="ts">
-import type { RegionData } from "@/interface/Dashboard";
+import type { typeRegions } from "@/interface/Regions";
 import ToolTip from "../tooltip/ToolTip.vue";
 import { computed, ref } from "vue";
+import { getRegionsData } from "@/services/regions.service";
+import { onMounted } from "vue";
 const props = defineProps<{
-  regionData: RegionData[];
+  regionData: typeRegions[];
 }>();
 
 const activeId = ref<number | null>(null);
@@ -19,9 +21,14 @@ const updateRegion = (payload: { id: number | null; x: number; y: number }) => {
 
 };
 
+
+
 const activeRegion = computed(() => {
   return props.regionData.find((r) => r.id === activeId.value) || null;
 });
+
+
+
 </script>
 
 <template>
@@ -30,8 +37,8 @@ const activeRegion = computed(() => {
 
     <div class="card-content">
       <ToolTip
-        v-if="activeRegion"
-        :region="activeRegion"
+       v-if="activeRegion"
+        :region="activeRegion" 
         :x="tooltipPos.x"
         :y="tooltipPos.y"
       />

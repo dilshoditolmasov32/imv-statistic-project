@@ -1,8 +1,9 @@
 <script lang="ts" setup>
-import { ref, computed, onMounted, onUnmounted } from "vue";
+import { ref, computed, onMounted, onUnmounted, watch } from "vue";
 import SearchInput from "../search-input/Search.vue";
 import closeIcon from "@assets/icons/closeIcon.svg";
-defineProps({
+
+const props = defineProps({
   isOpen: {
     required: true,
     type: Boolean,
@@ -14,41 +15,39 @@ defineProps({
   drawerText: {
     type: String,
     default: "",
-    required:true,
+    required: true,
   },
   width: {
     type: Number,
     default: 560,
   },
 });
-const search=ref("")
+
+const search = ref("");
 const emit = defineEmits(["close", "success"]);
 
-const handleSubmit = () => {
+const handleSearch = () => {
   emit("success");
 };
 
+// 2. Endi 'props' nomi pastda bemalol ishlaydi
+watch(() => props.isOpen, (newVal) => {
+  if (!newVal) {
+    search.value = "";
+  }
+});
+
+// ... qolgan rezayz (resize) mantiqlari
 const screenWidth = ref(window.innerWidth);
+const handleResize = () => { screenWidth.value = window.innerWidth; };
 
-const handleResize = () => {
-  screenWidth.value = window.innerWidth;
-};
-
-onMounted(() => {
-  window.addEventListener("resize", handleResize);
-});
-
-onUnmounted(() => {
-  window.removeEventListener("resize", handleResize);
-});
+onMounted(() => { window.addEventListener("resize", handleResize); });
+onUnmounted(() => { window.removeEventListener("resize", handleResize); });
 
 const drawerWidth = computed(() => {
-  if (screenWidth.value < 1400) return 420;   
-  return 560;                                
+  return screenWidth.value < 1400 ? 420 : 560;
 });
-
 </script>
-
 <template>
   <a-drawer
     :open="isOpen"
@@ -76,7 +75,11 @@ const drawerWidth = computed(() => {
     </p>
       <SearchInput v-model="search" />
 
-      <button class="search-button">Izlash</button>
+      <button class="search-button" @click="handleSearch"
+      
+      :disabled="search.length !==14"
+      :style="{opacity: search.length !== 14 ? 0.5 : 1, cursor: search.length !== 14 ? 'not-allowed' : 'pointer' }"
+      >Izlash</button>
     </slot>
   </a-drawer>
 </template>

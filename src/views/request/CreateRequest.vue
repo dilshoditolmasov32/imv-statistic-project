@@ -1,6 +1,6 @@
 
 <script setup>
-import { ref, computed } from 'vue';
+import { ref } from 'vue';
 
 const formData = ref({
   educationCode: undefined,
@@ -32,14 +32,11 @@ const handleSubmit = () => {
 
   applications.value.push(newApplication);
 
-  // Reset form
   resetForm();
 
-  // Show success message
   alert('Ariza muvaffaqiyatli yaratildi!');
 };
 
-// Reset form data
 const resetForm = () => {
   formData.value = {
     educationCode: undefined,

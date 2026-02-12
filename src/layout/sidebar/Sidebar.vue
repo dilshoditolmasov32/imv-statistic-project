@@ -1,43 +1,131 @@
-<script setup>
-import { computed } from "vue";
+<script setup lang="ts">
+import { computed, watch  } from "vue";
 import { useRouter } from "vue-router";
-import { useAuthStore } from "../../store/auth";
-import SidebarLogo from "@/assets/images/svg/grand-sidebar-logo.svg";
+import { useAuthStore } from "@/store/auth.pinia";
+import SidebarLogo from "@/assets/images/svg/grand-sidebar-logo.svg";4
+import { AVAILABLE_ROLES } from "@/utils/roles";
 
-const router = useRouter();
-const authStore = useAuthStore();
-
-const emit = defineEmits(["toggle"]);
-const toggleSidebar = () => {
-  router.push("/")
-};
+import HomeLogo from "@/assets/images/svg/home-icon.svg?component";
+import CheckLogo from "@/assets/images/svg/check-icon.svg?component";
+import OrganationLogo from "@/assets/images/svg/organazition-icon.svg?component";
+import FinanceLogo from "@/assets/images/svg/financ-icon.svg?component";
+import StudyingLogo from "@/assets/images/svg/studying-icon.svg?component";
+import UniversityLogo from "@/assets/images/svg/university-icon.svg?component";
+import UsersLogo from "@/assets/images/svg/users-icon.svg?component";
 
 const props = defineProps({
   isOpen: Boolean,
 });
 
+const authStore = useAuthStore();
+const router = useRouter();
+
+
+
+
+const allMenuItems = [
+  {
+    path: "/main",
+    title: "Asosiy",
+    icon: HomeLogo,
+    roles: [
+      AVAILABLE_ROLES.DEVELOPER,
+      AVAILABLE_ROLES.MINFIN_ADMIN,
+      AVAILABLE_ROLES.ORGANIZATION_ADMIN,
+      AVAILABLE_ROLES.SUPER_ADMIN,
+    ],
+  },
+  {
+    path: "/requests",
+    title: "Arizalar",
+    icon: CheckLogo,
+    roles: [
+      AVAILABLE_ROLES.DEVELOPER,
+      AVAILABLE_ROLES.MINFIN_ADMIN,
+      AVAILABLE_ROLES.ORGANIZATION_ADMIN,
+      AVAILABLE_ROLES.SUPER_ADMIN,
+    ],
+  },
+  {
+    path: "/organizations",
+    title: "Tashkilotlar",
+    icon: OrganationLogo,
+    roles: [
+      AVAILABLE_ROLES.DEVELOPER,
+      AVAILABLE_ROLES.MINFIN_ADMIN,
+      AVAILABLE_ROLES.ORGANIZATION_ADMIN,
+      AVAILABLE_ROLES.SUPER_ADMIN,
+    ],
+  },
+  {
+    path: "/economic-sectors",
+    title: "Iqtisodiy tarmoqlar",
+    icon: FinanceLogo,
+    roles: [
+      AVAILABLE_ROLES.DEVELOPER,
+      AVAILABLE_ROLES.MINFIN_ADMIN,
+      AVAILABLE_ROLES.ORGANIZATION_ADMIN,
+      AVAILABLE_ROLES.SUPER_ADMIN,
+    ],
+    badge: 8,
+  },
+  {
+    path: "/specialties",
+    title: "Ta’lim yo‘nalishlari",
+    icon: StudyingLogo,
+    roles: [
+      AVAILABLE_ROLES.DEVELOPER,
+      AVAILABLE_ROLES.MINFIN_ADMIN,
+      AVAILABLE_ROLES.ORGANIZATION_ADMIN,
+      AVAILABLE_ROLES.SUPER_ADMIN,
+    ],
+  },
+  {
+    path: "/universities",
+    title: "Universitetlar",
+    icon: UniversityLogo,
+    roles: [
+      AVAILABLE_ROLES.DEVELOPER,
+      AVAILABLE_ROLES.MINFIN_ADMIN,
+      AVAILABLE_ROLES.ORGANIZATION_ADMIN,
+      AVAILABLE_ROLES.SUPER_ADMIN,
+    ],
+  },
+  {
+    path: "/roles",
+    title: "Rollar",
+    icon: UsersLogo,
+    roles: [
+      AVAILABLE_ROLES.DEVELOPER,
+      AVAILABLE_ROLES.MINFIN_ADMIN,
+      AVAILABLE_ROLES.ORGANIZATION_ADMIN,
+      AVAILABLE_ROLES.SUPER_ADMIN,
+    ],
+  },
+];
+
 const menuItems = computed(() => {
-  const userRole = authStore.getUserRole;
+  const currentRole = authStore.userRole;
 
-  const mainRoute = router.options.routes.find((r) => r.path === "/");
-
-  const sidebarRoutes = mainRoute && mainRoute.children ? mainRoute.children : [];
-
-  return sidebarRoutes
-    .filter((route) => {
-      const isVisible = route.meta?.showInSidebar;
-      const hasPermission = !route.meta?.roles || route.meta.roles.includes(userRole);
-
-      return isVisible && hasPermission;
-    })
-    .map((route) => ({
-      path: route.path.startsWith("/") ? route.path : `/${route.path}`,
-      title: route.meta?.title,
-      icon: route.meta?.icon,
-      badge: route.meta?.badge ?? null,
-    }));
+  return allMenuItems.filter((item) => {
+    if (item.roles) {
+      return item.roles.includes(currentRole);
+    }
+    return true;
+  });
 });
+
+
+const toggleSidebar = () => {
+  router.push("/");
+};
+
+watch(() => authStore.userRole, (newRole) => {
+  console.log('Role changed in sidebar:', newRole);
+});
+
 </script>
+
 <template>
   <div class="sidebar" :class="{ collapsed: !isOpen }">
     <div class="logo-section" @click="toggleSidebar">
@@ -54,9 +142,11 @@ const menuItems = computed(() => {
         active-class="active-link"
       >
         <div class="item-content">
-          <img :src="item.icon" class="icon" />
+          <component :is="item.icon" class="icon" />
+
           <span v-if="isOpen" class="text">{{ item.title }}</span>
         </div>
+
         <span v-if="isOpen && item.badge" class="badge">
           {{ item.badge }}
         </span>
@@ -72,8 +162,6 @@ const menuItems = computed(() => {
   display: flex;
   flex-direction: column;
 }
-
-
 
 .logo-section {
   display: flex;
@@ -111,7 +199,7 @@ const menuItems = computed(() => {
   padding: 8px 12px;
   border-radius: 0.5rem;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: background 0.2s ease, color 0.2s ease;
   margin-left: 0.75rem;
   margin-right: 0.75rem;
 }
@@ -124,6 +212,19 @@ const menuItems = computed(() => {
 .menu-item:active {
   background-color: #22262f;
   color: #ececed;
+}
+
+.menu-item .icon {
+  color: #94979c;
+  transition: color 0.2s ease;
+}
+
+.menu-item:hover .icon {
+  color: #cecfd2;
+}
+
+.active-link .icon {
+  color: #cecfd2;
 }
 
 .item-content {

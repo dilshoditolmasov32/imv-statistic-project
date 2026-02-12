@@ -1,8 +1,6 @@
 <script setup lang="ts">
 import { nextTick, ref } from "vue";
-import VueIcon from "@kalimahapps/vue-icons/VueIcon";
 import userImageIcon from "@/assets/images/jpg/userIcon.jpg";
-import hamburgerIcon from "@assets/icons/hamburger-menu.png";
 import useTimerDate from "@/composables/useTimerDate.vue";
 import { AnOutlinedMenuFold, AnOutlinedMenuUnfold } from "@kalimahapps/vue-icons";
 

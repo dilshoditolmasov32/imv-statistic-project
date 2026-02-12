@@ -1,18 +1,19 @@
 <script setup lang="ts">
+import { computed, onMounted, ref } from "vue";
 import { TableColumn, SearchInput, Pagination, BreadCrumb } from "@/components";
 import { RequestTableType } from "@/interface/RequestTableType";
 import { RequestTableData } from "@data/RequestTableData";
-import { computed, onMounted, ref } from "vue";
+
 const columns = [
-  { title: "ID", dataIndex: "id", key: "id" },
+  { title: "ID", dataIndex: "id", key: "id", align: "center" },
   {
     title: "Tashkilot",
     dataIndex: "organizationName",
     key: "organizationName",
-    width: "450px",
+    width: "500px",
   },
 
-  { title: "ID raqam", dataIndex: "IDNumber", key: "IDNumber" },
+  { title: "ID raqam", dataIndex: "IDNumber", key: "IDNumber", width: "150px" },
   {
     title: "Talablar",
     dataIndex: "requirementCount",
@@ -25,16 +26,29 @@ const columns = [
     key: "directionCount",
     align: "center",
   },
-  { title: "Sana", dataIndex: "updateDate", key: "updateDate", align: "center" },
-  { title: "Holat", dataIndex: "actionState", key: "actionState", align: "center" },
+  {
+    title: "Sana",
+    dataIndex: "updateDate",
+    key: "updateDate",
+    align: "center",
+    width: "200px",
+  },
+  {
+    title: "Holat",
+    dataIndex: "actionState",
+    key: "actionState",
+    align: "center",
+    width: "250px",
+  },
   { title: "", dataIndex: "buttons", key: "actions", align: "center" },
 ];
 
-const search=ref("")
+const search = ref("");
 const page = ref(1);
-const pageSize = 12;
+const pageSize = 10;
 const tableData = ref<RequestTableType[]>([...RequestTableData]);
 const isLoading = ref(false);
+
 onMounted(() => {
   setTimeout(() => {
     isLoading.value = false;
@@ -42,10 +56,16 @@ onMounted(() => {
 });
 
 const filteredData = computed(() => {
+  const searchData = search.value.toLowerCase();
   if (!search.value) return tableData.value;
 
-  return tableData.value.filter(item =>
-    item.organizationName.toLowerCase().includes(search.value.toLowerCase())
+  return tableData.value.filter((item) =>
+    item.organizationName.toLowerCase().includes(searchData) || 
+    item.IDNumber.toString().includes(searchData) ||
+    item.id.toString().includes(searchData) || 
+    item.webciteName.includes(searchData) || 
+    item.updateDate.includes(searchData) 
+   
   );
 });
 
@@ -54,7 +74,6 @@ const paginatedData = computed(() => {
   const end = start + pageSize;
   return filteredData.value.slice(start, end);
 });
-
 
 const handleApprove = (record: any) => {
   record.actionState.confirmed = true;
@@ -113,7 +132,7 @@ const handleDelete = (id: number) => {
       />
       <div class="pagination-footer">
         <Pagination
-          :total="tableData.length"
+          :total="filteredData.length"
           :page="page"
           :page-size="pageSize"
           @update:page="page = $event"
@@ -148,7 +167,7 @@ const handleDelete = (id: number) => {
   font-weight: 600;
 }
 
-.button-filter span{
+.button-filter span {
   color: #414651;
 }
 

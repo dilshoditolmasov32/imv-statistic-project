@@ -1,56 +1,76 @@
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
-import { useRouter } from "vue-router";
 import { Loading } from "@/components";
 import LoginImage from "@/assets/images/png/login-image.webp";
 import LogoIcon from "@/assets/icons/logo.svg";
+import { useAuthStore } from "@/store/auth.pinia";
+import generate from "@/utils/generateCode"
 
-const router=useRouter()
-const isLoading = ref(true)
 
-onMounted(() => {
-  setTimeout(() => {
-    isLoading.value = false
-  }, 1500);
+const isLoading = ref(true);
+const authStore = useAuthStore();
+
+
+
+onMounted(async () => {
+  const params = new URLSearchParams(window.location.search);
+  const code = params.get('code');
+const code_verifier = localStorage.getItem('verify');
+
+  if (code && code_verifier) {
+    isLoading.value = true;
+    try {
+      await authStore.auth({
+        code: code,
+        redirect_url: import.meta.env.VITE_SSO_BASE_URL + '/auth',
+        code_verifier: code_verifier
+      });
+    } catch (error) {
+      isLoading.value = false;
+    }
+  } else {
+    isLoading.value = false;
+  }
 });
 
-const handleLogin=()=>{
-  router.push("/user-role")
-}
+const handleLogin = (e: Event) => {
+  e.preventDefault();
+  const {challenge,verify} = generate();
+  localStorage.setItem('verify', verify);
+  window.location.href = `https://sso.mf.uz/oauth2/login?clientId=e-grant&redirectUri=${import.meta.env.VITE_SSO_BASE_URL}/auth&codeChallenge=${challenge}`;
 
+}
 </script>
 
 <template>
   <Transition name="fade" mode="out-in">
-  <Loading v-if="isLoading"/>
-  <div v-else class="login-page">
-    <div class="login-user-data">
-      <a href="/" class="logo">
-        <img :src="LogoIcon" alt="logo icon" />
-      </a>
+    <Loading v-if="isLoading" />
+    <div v-else class="login-page">
+      <div class="login-user-data">
+        <a href="/" class="logo">
+          <img :src="LogoIcon" alt="logo icon" />
+        </a>
 
-      <div class="login-user">
-        <div>
-          <h3>Kirish</h3>
+        <div class="login-user">
+          <div>
+            <h3>Kirish</h3>
+          </div>
+          <button @click="handleLogin" class="login-button">IMV ID orqali kirish</button>
         </div>
-        <button 
-        @click="handleLogin"
-        class="login-button">IMV ID orqali kirish</button>
+
+        <p class="login-text">© Axborot texnologiyalari markazi - {{ new Date().getFullYear() }}</p>
       </div>
 
-      <p class="login-text">© Axborot texnologiyalari markazi - 2025</p>
-    </div>
-
-    <div class="login-image">
-      <img :src="LoginImage" alt="login image" />
-      <div class="image-text">
-        <p>
-          O‘zbekiston Respublikasi Prezidentining 01.02.2024-yildagi
-          PQ-785-sonli qarori ijrosida yaratildi
-        </p>
+      <div class="login-image">
+        <img :src="LoginImage" alt="login image" />
+        <div class="image-text">
+          <p>
+            O‘zbekiston Respublikasi Prezidentining 01.02.2024-yildagi
+            PQ-785-sonli qarori ijrosida yaratildi
+          </p>
+        </div>
       </div>
     </div>
-  </div>
   </Transition>
 
 </template>

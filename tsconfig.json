@@ -28,5 +28,5 @@
       "@store/*": ["./src/store/*"]
     }
   },
-  "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.vue"]
+  "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.vue", "src/store/core.pinia.ts", "src/utils/generateCode.ts"]
 }

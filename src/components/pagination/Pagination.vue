@@ -107,6 +107,14 @@ const goNext = () => {
   transition: all 0.3s;
 }
 
+.nav-button:disabled{
+ background-color:  #f5f5f5; 
+  color: #666666;           
+  cursor: not-allowed;   
+  opacity: 0.65;              
+  pointer-events: none;  
+}
+
 .nav-button span {
   font-weight: 600;
   color: #535862;

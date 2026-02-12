@@ -112,7 +112,6 @@ const handleReject = (record: any) => {
   width: 520px !important;
 }
 
-/* Tablet */
 @media (max-width: 1024px) {
   .custom-drawer .ant-drawer-content-wrapper {
     width: 360px !important;

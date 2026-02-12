@@ -1,5 +1,8 @@
-<script setup>
-import { useDashboardData } from "@composables/useDashboardData";
+<script setup lang="ts">
+import { onMounted, ref } from "vue";
+import { typeRegions } from "@/interface/Regions";
+import { useDashboardData } from "@/composables/useDashboardData";
+import { getRegionsData } from "@/services/regions.service";
 import {
   Map,
   BreadCrumb,
@@ -8,8 +11,8 @@ import {
   TopBuyersCard,
   AdditionalStatCard,
   BottomInfoCard,
-} from "@components";
-import { regionsData } from "@/data/RegionsTooltipData";
+} from "@/components";
+
 
 const {
   statsCards,
@@ -18,6 +21,37 @@ const {
   jobRequestCards,
   internshipCards,
 } = useDashboardData();
+const regions = ref<typeRegions[]>([]);
+const isLoading = ref(false);
+
+
+
+const RegionsData = async (name = "") => {
+  isLoading.value = true;
+  try {
+    const response = await getRegionsData(name);
+    
+    regions.value = response?.map((item: any) => {
+      return {
+        id: item.id,
+        title: item.title,
+        title_uz: item.title_uz,
+        code: item.code,
+        name: item.title_uz, 
+        isActive: true
+      };
+    });
+
+  } catch (err) {
+    console.error("Xatolik yuz berdi:", err);
+  } finally {
+    isLoading.value = false;
+  }
+};
+
+onMounted(() => {
+  RegionsData()
+})
 </script>
 
 <template>
@@ -66,7 +100,7 @@ const {
         </section>
       </div>
       <div class="dashboard-right">
-        <RegionCard :region-data="regionsData">
+        <RegionCard :region-data="regions">
           <template #map="{ updateRegion, currentId }">
             <Map :current-id="currentId" @regionHover="updateRegion" />
           </template>

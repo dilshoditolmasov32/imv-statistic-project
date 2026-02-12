@@ -2,55 +2,75 @@
 import * as XLSX from "xlsx";
 import { computed, onMounted, ref } from "vue";
 import { TableColumn, SearchInput, Pagination, BreadCrumb } from "@/components";
-import { RequestTableData } from "@data/RequestTableData";
-import { RequestTableType } from "@/interface/RequestTableType";
+import { typeUniversities, UniversityResponse } from "@/interface/Universities";
+import { getUniversityData } from "@/services/university.service";
 import excelIcon from "@assets/icons/excel.svg";
 import filterIcon from "@assets/icons/filter.svg";
 
 const columns = [
   { title: "№", dataIndex: "id", key: "id", align: "center" },
-  {
-    title: "Yo‘nalish nomi",
-    dataIndex: "organizationName",
-    key: "organizationName",
-  },
-
-  { title: "Turi", dataIndex: "IDNumber", key: "IDNumber" },
-  { title: "Veb sayt", dataIndex: "webciteName", key: "webcite" },
+  { title: "Yo‘nalish nomi", dataIndex: "name", key: "name" },
+  { title: "turi", dataIndex: "description", key: "description", width: "200px" },
+  { title: "Veb sayt", dataIndex: "website", key: "website", width: "180px" },
 ];
 
-const search=ref("")
 const page = ref(1);
-const pageSize = 12;
-const tableData = ref<RequestTableType[]>([...RequestTableData]);
+const pageSize = ref(10); 
+const totalCount = ref(0);
 const isLoading = ref(false);
-onMounted(() => {
-  setTimeout(() => {
+const search = ref("");
+const universities = ref<typeUniversities[]>([]);
+
+const universitiesData = async (currentPage = 1) => {
+  isLoading.value = true;
+  try {
+    const response: UniversityResponse = await getUniversityData(
+      currentPage,
+      pageSize.value
+    );
+
+    universities.value = response.data;
+    totalCount.value = response.total_count;
+    pageSize.value = response.per_page;
+    page.value = response.current_page;
+
+  } catch (err) {
+    console.error("Xatolik bor:", err);
+    universities.value = [];
+  } finally {
     isLoading.value = false;
-  }, 1500);
+  }
+};
+
+onMounted(() => {
+  universitiesData();
 });
 
 const filteredData = computed(() => {
-  if (!search.value) return tableData.value;
-
-  return tableData.value.filter(item =>
-    item.organizationName.toLowerCase().includes(search.value.toLowerCase())
+  if (!search.value) return universities.value;
+  const s = search.value.toLowerCase();
+  return universities.value.filter(
+    (item) =>
+      item.name?.toLowerCase().includes(s) || item.description?.toLowerCase().includes(s)
   );
 });
 
 const paginatedData = computed(() => {
-  const start = (page.value - 1) * page.value;
-  const end = start + pageSize;
-  return filteredData.value.slice(start, end);
+  return filteredData.value;
 });
 
+const handlePageChange = (newPage: number) => {
+  page.value = newPage;
+  universitiesData(newPage);
+};
 
 const exportToExcel = () => {
-  const worksheet = XLSX.utils.json_to_sheet(RequestTableData);
+  const worksheet = XLSX.utils.json_to_sheet(universities.value);
   const workbook = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(workbook, worksheet, "University");
   XLSX.writeFile(workbook, "university.xlsx");
 };
+
 </script>
 
 <template>
@@ -79,10 +99,10 @@ const exportToExcel = () => {
       <TableColumn :data="paginatedData" :columns="columns" :loading="isLoading" />
       <div class="pagination-footer">
         <Pagination
-          :total="tableData.length"
+          :total="totalCount"
           :page="page"
           :page-size="pageSize"
-          @update:page="page = $event"
+          @update:page="handlePageChange"
         />
       </div>
     </div>
@@ -119,7 +139,7 @@ const exportToExcel = () => {
   font-weight: 600;
 }
 
-.button-filter span{
+.button-filter span {
   color: #414651;
 }
 

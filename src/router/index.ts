@@ -1,157 +1,171 @@
-import {
-  Main,
-  Organization,
-  EconomicSectors,
-  Request,
-  Roles,
-  Specialties,
-  Universities,
-  Login,
-  CreateRequest,
-  MyRequest,
-} from "@/views";
-import UserRoleForm from "@/components/form/UserRoleForm.vue";
 import { createRouter, createWebHistory } from "vue-router";
-import { useAuthStore } from "@/store/auth";
-import MainLayout from "@/layout/MainLayout.vue";
+import { useAuthStore } from "@/store/auth.pinia";
+import { getUserData } from "@/services/user.service";
+import { AVAILABLE_ROLES } from "@/utils/roles";
 
-import HomeLogo from "../assets/images/svg/home-icon.svg";
-import CheckLogo from "../assets/images/svg/check-icon.svg";
-import OrganationLogo from "../assets/images/svg/organazition-icon.svg";
-import FinanceLogo from "../assets/images/svg/financ-icon.svg";
-import StudyingLogo from "../assets/images/svg/studying-icon.svg";
-import UniversityLogo from "../assets/images/svg/university-icon.svg";
-import UsersLogo from "../assets/images/svg/users-icon.svg";
 
 const routes = [
   {
-    path: "/login",
+    path: "/auth",
     name: "Login",
-    component: Login,
-    meta: { showInSidebar: false, guestOnly: true },
+    component: () => import("@/views/login/Login.vue"),
+    meta: { guestOnly: true },
   },
-  {
-    path: "/user-role",
-    name: "UserRoleStateForm",
-    component: UserRoleForm,
-    meta: { showInSidebar: false, guestOnly: true },
-  },
+
   {
     path: "/",
-    component: MainLayout,
-    redirect: "/main",
+    component: () => import("@/layout/MainLayout.vue"),
+    meta: { requireAuth: true },
+
     children: [
       {
         path: "main",
         name: "Main",
-        component: Main,
+        component: () => import("@/views/main/Main.vue"),
         meta: {
           title: "Asosiy",
-          icon: HomeLogo,
+          icon: "home-icon",
           requireAuth: true,
-          showInSidebar: true,
-          roles: ["admin", "user"],
+          roles: [
+            AVAILABLE_ROLES.DEVELOPER,
+            AVAILABLE_ROLES.MINFIN_ADMIN,
+            AVAILABLE_ROLES.ORGANIZATION_ADMIN,
+            AVAILABLE_ROLES.SUPER_ADMIN,
+          ],
         },
       },
       {
         path: "requests",
         name: "Requests",
-        component: Request,
+        component: () => import("@/views/request/Request.vue"),
 
         meta: {
           title: "Arizalar",
-          icon: CheckLogo,
-          showInSidebar: true,
+          icon: "check-icon",
           requireAuth: true,
-          roles: ["admin"],
+          roles: [
+            AVAILABLE_ROLES.DEVELOPER,
+            AVAILABLE_ROLES.MINFIN_ADMIN,
+            AVAILABLE_ROLES.ORGANIZATION_ADMIN,
+            AVAILABLE_ROLES.SUPER_ADMIN,
+          ],
         },
       },
       {
         path: "organizations",
         name: "Organizations",
-        component: Organization,
+        component: () => import("@/views/organizations/Organizations.vue"),
         meta: {
           title: "Tashkilotlar",
-          icon: OrganationLogo,
-          showInSidebar: true,
+          icon: "organization-icon",
           requireAuth: true,
-          roles: ["admin"],
+          roles: [
+            AVAILABLE_ROLES.DEVELOPER,
+            AVAILABLE_ROLES.MINFIN_ADMIN,
+            AVAILABLE_ROLES.ORGANIZATION_ADMIN,
+            AVAILABLE_ROLES.SUPER_ADMIN,
+          ],
         },
       },
       {
         path: "economic-sectors",
         name: "EconomicSectors",
-        component: EconomicSectors,
+        component: () => import("@/views/economic-sectors/EconomicSectors.vue"),
         meta: {
           title: "Iqtisodiy tarmoqlar",
-          icon: FinanceLogo,
-          showInSidebar: true,
+          icon: "Finance-logo",
           badge: 8,
           requireAuth: true,
-          roles: ["admin"],
+          roles: [
+            AVAILABLE_ROLES.DEVELOPER,
+            AVAILABLE_ROLES.MINFIN_ADMIN,
+            AVAILABLE_ROLES.ORGANIZATION_ADMIN,
+            AVAILABLE_ROLES.SUPER_ADMIN,
+          ],
         },
       },
       {
         path: "specialties",
         name: "Specialties",
-        component: Specialties,
+        component: () => import("@/views/specialties/Specialties.vue"),
         meta: {
           title: "Ta’lim yo‘nalishlari",
-          icon: StudyingLogo,
-          showInSidebar: true,
+          icon: "Studying-icon",
           requireAuth: true,
-          roles: ["admin"],
+          roles: [
+            AVAILABLE_ROLES.DEVELOPER,
+            AVAILABLE_ROLES.MINFIN_ADMIN,
+            AVAILABLE_ROLES.ORGANIZATION_ADMIN,
+            AVAILABLE_ROLES.SUPER_ADMIN,
+          ],
         },
       },
       {
         path: "universities",
         name: "Universities",
-        component: Universities,
+        component: () => import("@/views/universities/Universities.vue"),
         meta: {
-          title: "Universitetlar",
-          icon: UniversityLogo,
-          showInSidebar: true,
+          title: "Universititlar",
+          icon: "university-icon",
           requireAuth: true,
-          roles: ["admin"],
+          roles: [
+            AVAILABLE_ROLES.DEVELOPER,
+            AVAILABLE_ROLES.MINFIN_ADMIN,
+            AVAILABLE_ROLES.ORGANIZATION_ADMIN,
+            AVAILABLE_ROLES.SUPER_ADMIN,
+          ],
         },
       },
       {
         path: "roles",
         name: "Roles",
-        component: Roles,
+        component: () => import("@/views/roles/Roles.vue"),
         meta: {
           title: "Rollar",
-          icon: UsersLogo,
-          showInSidebar: true,
+          icon: "users-icon",
           requireAuth: true,
-          roles: ["admin"],
+          roles: [
+            AVAILABLE_ROLES.DEVELOPER,
+            AVAILABLE_ROLES.MINFIN_ADMIN,
+            AVAILABLE_ROLES.ORGANIZATION_ADMIN,
+            AVAILABLE_ROLES.SUPER_ADMIN,
+          ],
         },
       },
 
       {
         path: "my-request",
         name: "MyRequest",
-        component: MyRequest,
+        component: () => import("@/views/request/MyRequest.vue"),
         children: [
           {
             path: "create",
             name: "CreateRequest",
-            component: CreateRequest,
+            component: () => import("@/views/request/CreateRequest.vue"),
             meta: {
               title: "Ariza yaratish",
-              icon: CheckLogo,
-              showInSidebar: true,
+              icon: "check-icon",
               requireAuth: true,
-              roles: ["admin"],
+              roles: [
+                AVAILABLE_ROLES.DEVELOPER,
+                AVAILABLE_ROLES.MINFIN_ADMIN,
+                AVAILABLE_ROLES.ORGANIZATION_ADMIN,
+                AVAILABLE_ROLES.SUPER_ADMIN,
+              ],
             },
           },
         ],
         meta: {
           title: "Mening arizalarim",
-          icon: CheckLogo,
+          icon: "check-icon",
           showInSidebar: true,
           requireAuth: true,
-          roles: ["admin"],
+          roles: [
+            AVAILABLE_ROLES.DEVELOPER,
+            AVAILABLE_ROLES.MINFIN_ADMIN,
+            AVAILABLE_ROLES.ORGANIZATION_ADMIN,
+            AVAILABLE_ROLES.SUPER_ADMIN,
+          ],
         },
       },
     ],
@@ -163,23 +177,46 @@ const router = createRouter({
   routes,
 });
 
-router.beforeEach((to, from, next) => {
+router.beforeEach(async (to, from, next) => {
   const authStore = useAuthStore();
-  const userRole = authStore.getUserRole;
+  const token = localStorage.getItem("_token");
 
-  const isAuth = authStore.isAuthenticated;
-  const menuItems = router.options.routes
-    .find((r) => r.path === "/")
-    ?.children?.filter((route) => {
-      return route.meta?.showInSidebar && route.meta?.roles?.includes(userRole);
-    });
-  if (to.meta.requireAuth && !isAuth) {
-    next({ name: "Login" });
-  } else if (to.name === "Login" && isAuth) {
-    next({ name: "Main" });
-  } else {
-    next();
+  if (to.meta.guestOnly) {
+    if (token) {
+      return next({ name: "Main", replace: true });
+    }
+    return next();
   }
+
+  if (to.meta.requireAuth) {
+    if (!token) {
+      return next({ name: "Login", replace: true });
+    }
+
+    if (token && !authStore.userRole) {
+      try {
+        const response = await getUserData();
+        authStore.userRole = response.data.role_name;
+      } catch (error) {
+        console.error("Ruxsat olishda xatolik:", error);
+        localStorage.removeItem("_token");
+        return next({ name: "Login", replace: true });
+      }
+    }
+
+    const allowedRoles = to.meta.roles as string[];
+
+    if (allowedRoles && allowedRoles.length > 0 && to.name !== "Main") {
+      const userRole = authStore.userRole || "";
+
+      if (!allowedRoles.includes(userRole)) {
+        console.warn("Ruxsat yo'q!");
+        return next({ name: "Main" });
+      }
+    }
+  }
+
+  next();
 });
 
 export default router;

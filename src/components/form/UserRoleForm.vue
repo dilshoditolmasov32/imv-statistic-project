@@ -26,10 +26,10 @@ const onFinish = (values: any) => {
   console.log("Success:", values);
 
   localStorage.setItem("token", "fake-token-123");
-  localStorage.setItem("user", JSON.stringify({ role: "admin", name: "Admin" }));
+  localStorage.setItem("user", JSON.stringify({ role_name: "admin", name: "Admin" }));
 
   authStore.token = "fake-token-123";
-  authStore.user = { id: 1, role: "admin", name: "Admin" };
+  authStore.user = { id: 1, role_name: "admin", name: "Admin" };
 
   router.push("/");
 };
