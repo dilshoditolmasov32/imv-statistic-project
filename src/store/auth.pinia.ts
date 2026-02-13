@@ -9,61 +9,58 @@ import { getUserData } from "@/services/user.service";
 export const useAuthStore = defineStore("auth", () => {
   const core = useCore();
   const router = useRouter();
-  const savedUserInfo = localStorage.getItem("user_info");
 
-  const getInitialRole = () => {
-    if (savedUserInfo) {
-      try {
-        const parsed = JSON.parse(savedUserInfo);
-        return parsed.data?.role_name || "";
-      } catch (e) {
-        return "";
-      }
-    }
-    return "";
-  };
-
-  const userRole = ref<string>(getInitialRole());
+  const userRole = ref<string>("")
 
   const auth = async (payload: AuthPayload) => {
+    console.log("AUTH FUNCTION STARTED");
     try {
       core.setMainLoader(true);
       const response = await api.post("/api/user/login-with-sso", payload);
       const data = response.data;
-      if (data.user && data.user.role_name) {
-    userRole.value = data.user.role_name;
-    console.log("Role set from login response:", userRole.value);
-}
-      console.log(data, "data");
+
+      console.log("aut pinia 22 ", data)
       localStorage.setItem("_token", data.user_auth_token);
       localStorage.setItem("sso_token", data.sso_access_token);
 
       const userResponse = await getUserData();
-      const userData = userResponse.data;
-
-      console.log(userData, "user data")
-      localStorage.setItem("user_info", JSON.stringify(userData));
+      const userData = userResponse.data.data;
+      console.log("user role 28 ", userData)
 
       userRole.value = userData.role_name;
-      console.log("New role set:", userRole.value)
+      localStorage.setItem("user_info", JSON.stringify(userData));
 
       core.setToast({
         status: "success",
         message: "Muvaffaqiyatli",
       });
-      
+
       await nextTick();
-      router.replace("/main");
+      router.replace({ name: "Main" });
     } catch (error: any) {
       console.error("Auth error:", error);
       core.setToast({
         status: "error",
         message: error.response?.data?.message || "Xatolik yuz berdi",
       });
+      router.replace({ name: "Login" });
     } finally {
+      localStorage.removeItem("verify");
       core.setMainLoader(false);
     }
   };
 
-  return { auth, userRole };
+
+const initAuth = async () => {
+  const token = localStorage.getItem("_token");
+  if (!token) return;
+
+  const response = await getUserData();
+  const userData = response.data.data;
+
+  userRole.value = userData.role_name;
+  localStorage.setItem("user_info", JSON.stringify(userData));
+};
+
+  return { auth, userRole, initAuth };
 });

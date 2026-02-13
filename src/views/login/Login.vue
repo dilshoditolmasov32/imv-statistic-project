@@ -13,17 +13,18 @@ const authStore = useAuthStore();
 
 
 onMounted(async () => {
+  console.log("AUTH PAGE MOUNTED");
   const params = new URLSearchParams(window.location.search);
   const code = params.get('code');
-const code_verifier = localStorage.getItem('verify');
+  const verify = localStorage.getItem('verify');
 
-  if (code && code_verifier) {
+  if (code && verify) {
     isLoading.value = true;
     try {
       await authStore.auth({
         code: code,
         redirect_url: import.meta.env.VITE_SSO_BASE_URL + '/auth',
-        code_verifier: code_verifier
+        code_verifier: verify
       });
     } catch (error) {
       isLoading.value = false;
@@ -34,8 +35,9 @@ const code_verifier = localStorage.getItem('verify');
 });
 
 const handleLogin = (e: Event) => {
+  console.log("AUTH PAGE MOUNTED");
   e.preventDefault();
-  const {challenge,verify} = generate();
+  const { challenge, verify } = generate();
   localStorage.setItem('verify', verify);
   window.location.href = `https://sso.mf.uz/oauth2/login?clientId=e-grant&redirectUri=${import.meta.env.VITE_SSO_BASE_URL}/auth&codeChallenge=${challenge}`;
 
@@ -76,7 +78,6 @@ const handleLogin = (e: Event) => {
 </template>
 
 <style scoped>
-
 .fade-enter-active,
 .fade-leave-active {
   transition: opacity 0.5s ease;

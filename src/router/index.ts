@@ -3,8 +3,8 @@ import { useAuthStore } from "@/store/auth.pinia";
 import { getUserData } from "@/services/user.service";
 import { AVAILABLE_ROLES } from "@/utils/roles";
 
-
 const routes = [
+  // 🔐 AUTH PAGE (hech qachon layout ichida emas)
   {
     path: "/auth",
     name: "Login",
@@ -12,12 +12,19 @@ const routes = [
     meta: { guestOnly: true },
   },
 
+  // 🔒 PROTECTED LAYOUT
   {
     path: "/",
     component: () => import("@/layout/MainLayout.vue"),
     meta: { requireAuth: true },
 
     children: [
+      // 🔥 Default redirect
+      {
+        path: "",
+        redirect: "/main",
+      },
+
       {
         path: "main",
         name: "Main",
@@ -25,7 +32,6 @@ const routes = [
         meta: {
           title: "Asosiy",
           icon: "home-icon",
-          requireAuth: true,
           roles: [
             AVAILABLE_ROLES.DEVELOPER,
             AVAILABLE_ROLES.MINFIN_ADMIN,
@@ -170,6 +176,12 @@ const routes = [
       },
     ],
   },
+
+  // 404
+  {
+    path: "/:pathMatch(.*)*",
+    redirect: "/main",
+  },
 ];
 
 const router = createRouter({
@@ -180,40 +192,15 @@ const router = createRouter({
 router.beforeEach(async (to, from, next) => {
   const authStore = useAuthStore();
   const token = localStorage.getItem("_token");
-
-  if (to.meta.guestOnly) {
-    if (token) {
-      return next({ name: "Main", replace: true });
-    }
-    return next();
+  if (localStorage.getItem('_token') && !authStore.userRole) {
+    await getUserData(); 
   }
 
-  if (to.meta.requireAuth) {
-    if (!token) {
-      return next({ name: "Login", replace: true });
-    }
-
-    if (token && !authStore.userRole) {
-      try {
-        const response = await getUserData();
-        authStore.userRole = response.data.role_name;
-      } catch (error) {
-        console.error("Ruxsat olishda xatolik:", error);
-        localStorage.removeItem("_token");
-        return next({ name: "Login", replace: true });
-      }
-    }
-
-    const allowedRoles = to.meta.roles as string[];
-
-    if (allowedRoles && allowedRoles.length > 0 && to.name !== "Main") {
-      const userRole = authStore.userRole || "";
-
-      if (!allowedRoles.includes(userRole)) {
-        console.warn("Ruxsat yo'q!");
-        return next({ name: "Main" });
-      }
-    }
+  if (to.path === "/auth") {
+    return next();
+  }
+  if (to.meta.requireAuth && !token) {
+    return next({ name: "Login" });
   }
 
   next();

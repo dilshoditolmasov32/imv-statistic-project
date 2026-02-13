@@ -3,14 +3,18 @@ import { onMounted, ref } from "vue";
 import Header from "./header/Header.vue";
 import Sidebar from "./sidebar/Sidebar.vue";
 import Loading from "@/components/loading/Loading.vue";
+import { useAuthStore } from "@/store/auth.pinia";
 const isSidebarOpen = ref(true);
 const globalLoading = ref(true);
 
 const handleSidebarToggle = () => {
   isSidebarOpen.value = !isSidebarOpen.value;
 };
+const authStore = useAuthStore();
 
 onMounted(() => {
+  authStore.initAuth();
+
   setTimeout(() => {
     globalLoading.value = false;
   }, 1500);

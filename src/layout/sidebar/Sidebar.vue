@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, watch  } from "vue";
+import { computed, onMounted  } from "vue";
 import { useRouter } from "vue-router";
 import { useAuthStore } from "@/store/auth.pinia";
 import SidebarLogo from "@/assets/images/svg/grand-sidebar-logo.svg";4
@@ -12,6 +12,7 @@ import FinanceLogo from "@/assets/images/svg/financ-icon.svg?component";
 import StudyingLogo from "@/assets/images/svg/studying-icon.svg?component";
 import UniversityLogo from "@/assets/images/svg/university-icon.svg?component";
 import UsersLogo from "@/assets/images/svg/users-icon.svg?component";
+import { getUserData } from "@/services/user.service";
 
 const props = defineProps({
   isOpen: Boolean,
@@ -19,6 +20,9 @@ const props = defineProps({
 
 const authStore = useAuthStore();
 const router = useRouter();
+
+
+
 
 
 
@@ -104,21 +108,12 @@ const allMenuItems = [
   },
 ];
 
-const currentRole = computed(() => authStore.userRole);
-// const menuItems = computed(() => {
-//   return allMenuItems.filter((item) => {
-//     if (item.roles) {
-//       return item.roles.includes(authStore.userRole);
-//     }
-//     return true;
-//   });
-// });
-
 const menuItems = computed(() => {
-  return allMenuItems.filter(route =>
-    !route?.roles ||
-    route.roles.includes(authStore.userRole)
-  );
+  return allMenuItems.filter((item) =>{
+    const route=item?.roles?.includes(authStore.userRole)
+return route  
+ 
+  });
 });
 
 
@@ -126,9 +121,9 @@ const toggleSidebar = () => {
   router.push("/");
 };
 
-watch(() => authStore.userRole, (newRole) => {
-  console.log('Role changed in sidebar:', newRole);
-});
+
+
+
 
 </script>
 
