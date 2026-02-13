@@ -1,48 +1,86 @@
 <script setup lang="ts">
-import { computed, ref } from "vue";
-import { TableColumn, SearchInput, Pagination, BreadCrumb } from "@/components";
-import { RequestTableData } from "@data/RequestTableData";
+import { computed, onMounted, ref } from "vue";
+import { TableColumn, Pagination, BreadCrumb } from "@/components";
 import addIcon from "@assets/icons/add.svg";
 import Drawer from "@/components/drawer/Drawer.vue";
-import { RequestTableType } from "@/interface/RequestTableType";
+import { UserRole, UserRoleResponse } from "@/interface/Role";
+import { getUserRoleData } from "@/services/role.service";
 
 const columns = [
   { title: "№", dataIndex: "id", key: "id", align: "center" },
   {
     title: "Rol turi",
-    dataIndex: "organizationName",
-    key: "organizationName",
+    dataIndex: "role_name",
+    key: "role_name",
   },
 
-  { title: "Xodim", dataIndex: "IDNumber", key: "IDNumber" },
+  { title: "Xodim", dataIndex: "full_name", key: "full_name" },
   {
     title: "Yaratilgan vaqti",
-    dataIndex: "requirementCount",
-    key: "requirementCount",
+    dataIndex: "created_at",
+    key: "created_at",
   },
-  { title: "Holat", dataIndex: "actionState", key: "actionState", align: "center" },
+  { title: "Holat", dataIndex: "status", key: "status", align: "center" },
   { title: "", dataIndex: "buttons", key: "actions", align: "center" },
 ];
 
-
 const page = ref(1);
-const pageSize = 12;
+const pageSize = ref(10);
+const totalCount = ref(0);
 const isLoading = ref(false);
+const search = ref("");
 const currentTitle = ref("Rol qo’shish");
 const currentText = ref("JShSHIR");
-const TableData = ref<RequestTableType[]>([...RequestTableData]);
+const userRole = ref<UserRole[]>([]);
 
-const paginatedData = computed(() => {
-  const start = (page.value - 1) * pageSize;
-  return TableData.value.slice(start, start + pageSize);
+const userRoleData = async (currentPage = 1) => {
+  isLoading.value = true;
+  try {
+    const response: UserRoleResponse = await getUserRoleData(currentPage, pageSize.value);
+
+
+    userRole.value = response.data;
+    totalCount.value = response.total_count;
+    pageSize.value = response.per_page;
+    page.value = response.current_page;
+  } catch (err) {
+    console.error("Xatolik bor:", err);
+    userRole.value = [];
+  } finally {
+    isLoading.value = false;
+  }
+};
+
+onMounted(() => {
+  userRoleData();
 });
 
+const filteredData = computed(() => {
+  const searchData = search.value.toLowerCase();
+  if (!search.value) return userRole.value;
+
+  return userRole.value.filter(
+    (item) =>
+      item.role_name.toLowerCase().includes(searchData) ||
+      item.full_name.includes(searchData) ||
+      item.pinfl.includes(searchData)
+  );
+});
+
+const paginatedData = computed(() => {
+  return filteredData.value;
+});
+
+const handlePageChange = (newPage: number) => {
+  page.value = newPage;
+  userRoleData(newPage);
+};
 const handleEdit = (record: any) => {
   console.log("Tahrirlash uchun:", record);
 };
 
 const handleDelete = (id: number) => {
-  TableData.value = TableData.value.filter((item) => item.id !== id);
+   userRole.value = userRole.value.filter((item) => item.id !== id);
 };
 
 const isDrawerOpen = ref(false);
@@ -50,7 +88,6 @@ const isDrawerOpen = ref(false);
 const handleSuccess = () => {
   isDrawerOpen.value = false;
 };
-
 
 const handleApprove = (record: any) => {
   record.actionState.confirmed = true;
@@ -61,7 +98,6 @@ const handleReject = (record: any) => {
   record.actionState.cancelled = true;
   record.actionState.confirmed = false;
 };
-
 </script>
 
 <template>
@@ -83,14 +119,13 @@ const handleReject = (record: any) => {
         @delete="handleDelete"
         @approve="handleApprove"
         @reject="handleReject"
-        
       />
       <div class="pagination-footer">
         <Pagination
-          :total="TableData.length"
+          :total="filteredData.length"
           :page="page"
           :page-size="pageSize"
-          @update:page="page = $event"
+          @update:page="handlePageChange"
         />
       </div>
     </div>
@@ -107,7 +142,6 @@ const handleReject = (record: any) => {
 </template>
 
 <style scoped>
-
 .custom-drawer .ant-drawer-content-wrapper {
   width: 520px !important;
 }
@@ -146,10 +180,9 @@ const handleReject = (record: any) => {
   font-weight: 600;
 }
 
-.button-filter span{
+.button-filter span {
   color: #414651;
 }
-
 
 .add-button {
   background: #17b26a;

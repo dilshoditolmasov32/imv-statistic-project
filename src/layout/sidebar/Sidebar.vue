@@ -104,15 +104,21 @@ const allMenuItems = [
   },
 ];
 
-const menuItems = computed(() => {
-  const currentRole = authStore.userRole;
+const currentRole = computed(() => authStore.userRole);
+// const menuItems = computed(() => {
+//   return allMenuItems.filter((item) => {
+//     if (item.roles) {
+//       return item.roles.includes(authStore.userRole);
+//     }
+//     return true;
+//   });
+// });
 
-  return allMenuItems.filter((item) => {
-    if (item.roles) {
-      return item.roles.includes(currentRole);
-    }
-    return true;
-  });
+const menuItems = computed(() => {
+  return allMenuItems.filter(route =>
+    !route?.roles ||
+    route.roles.includes(authStore.userRole)
+  );
 });
 
 

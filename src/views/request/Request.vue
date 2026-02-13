@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from "vue";
 import { TableColumn, SearchInput, Pagination, BreadCrumb } from "@/components";
-import { RequestTableType } from "@/interface/RequestTableType";
-import { RequestTableData } from "@data/RequestTableData";
+import { RequestResponse, RequestTableType } from "@/interface/RequestTableType";
+import { getRequestsData } from "@/services/request.service";
 
 const columns = [
   { title: "ID", dataIndex: "id", key: "id", align: "center" },
@@ -43,37 +43,56 @@ const columns = [
   { title: "", dataIndex: "buttons", key: "actions", align: "center" },
 ];
 
-const search = ref("");
 const page = ref(1);
-const pageSize = 10;
-const tableData = ref<RequestTableType[]>([...RequestTableData]);
+const pageSize = ref(10);
+const totalCount = ref(0);
 const isLoading = ref(false);
+const search = ref("");
+const requests = ref<RequestTableType[]>([]);
+
+const requestData = async (currentPage = 1) => {
+  isLoading.value = true;
+  try {
+    const response: RequestResponse = await getRequestsData(currentPage, pageSize.value);
+
+    requests.value = response.data;
+    totalCount.value = response.total_count;
+    pageSize.value = response.per_page;
+    page.value = response.current_page;
+  } catch (err) {
+    console.error("Xatolik bor:", err);
+    requests.value = [];
+  } finally {
+    isLoading.value = false;
+  }
+};
 
 onMounted(() => {
-  setTimeout(() => {
-    isLoading.value = false;
-  }, 1500);
+  requestData();
 });
 
 const filteredData = computed(() => {
   const searchData = search.value.toLowerCase();
-  if (!search.value) return tableData.value;
+  if (!search.value) return requests.value;
 
-  return tableData.value.filter((item) =>
-    item.organizationName.toLowerCase().includes(searchData) || 
-    item.IDNumber.toString().includes(searchData) ||
-    item.id.toString().includes(searchData) || 
-    item.webciteName.includes(searchData) || 
-    item.updateDate.includes(searchData) 
-   
+  return requests.value.filter(
+    (item) =>
+      item.organizationName.toLowerCase().includes(searchData) ||
+      item.IDNumber.toString().includes(searchData) ||
+      item.id.toString().includes(searchData) ||
+      item.webciteName.includes(searchData) ||
+      item.updateDate.includes(searchData)
   );
 });
 
 const paginatedData = computed(() => {
-  const start = (page.value - 1) * page.value;
-  const end = start + pageSize;
-  return filteredData.value.slice(start, end);
+  return filteredData.value;
 });
+
+const handlePageChange = (newPage: number) => {
+  page.value = newPage;
+  requestData(newPage);
+};
 
 const handleApprove = (record: any) => {
   record.actionState.confirmed = true;
@@ -90,7 +109,7 @@ const handleEdit = (record: any) => {
 };
 
 const handleDelete = (id: number) => {
-  tableData.value = tableData.value.filter((item) => item.id !== id);
+  requests.value = requests.value.filter((item) => item.id !== id);
 };
 </script>
 
@@ -135,7 +154,7 @@ const handleDelete = (id: number) => {
           :total="filteredData.length"
           :page="page"
           :page-size="pageSize"
-          @update:page="page = $event"
+          @update:page="handlePageChange"
         />
       </div>
     </div>

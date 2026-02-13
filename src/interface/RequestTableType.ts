@@ -17,3 +17,13 @@ export interface RequestTableType {
   },
   webciteName:string
 }
+
+
+export interface RequestResponse {
+  data: RequestTableType[];
+  per_page: number;
+  total_count: number;
+  current_page: number;
+  total_pages: number;
+}
+

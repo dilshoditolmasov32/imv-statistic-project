@@ -3,6 +3,7 @@ import { nextTick, ref } from "vue";
 import userImageIcon from "@/assets/images/jpg/userIcon.jpg";
 import useTimerDate from "@/composables/useTimerDate.vue";
 import { AnOutlinedMenuFold, AnOutlinedMenuUnfold } from "@kalimahapps/vue-icons";
+import { DownOutlined } from "@ant-design/icons-vue";
 
 const isOpen = ref(false);
 const search = ref("");
@@ -14,8 +15,6 @@ const emit = defineEmits<{
 const props = defineProps<{
   isSidebarOpen: boolean;
 }>();
-
-
 
 const toggleSidebar = () => {
   emit("toggle");
@@ -36,18 +35,25 @@ const closeSearch = () => {
     isOpen.value = false;
   }
 };
+
+const handleLogout = () => {
+  localStorage.removeItem("_token");
+  localStorage.removeItem("sso_token");
+  localStorage.removeItem("user_info");
+  localStorage.removeItem("verify");
+
+  window.location.href = "/auth";
+};
 </script>
 
 <template>
   <div class="header-layout">
     <div class="header-time">
-
       <button v-if="isSidebarOpen" class="toggle-btn" @click="toggleSidebar">
-<AnOutlinedMenuFold style="font-size: 28px; color:#000"/>
-       
+        <AnOutlinedMenuFold style="font-size: 28px; color: #000" />
       </button>
       <button class="toggle-btn" v-else @click="toggleSidebar">
-       <AnOutlinedMenuUnfold style="font-size: 28px; color:#000"/>
+        <AnOutlinedMenuUnfold style="font-size: 28px; color: #000" />
       </button>
       <useTimerDate />
     </div>
@@ -123,33 +129,60 @@ const closeSearch = () => {
         </svg>
       </button>
 
-      <button id="user-profile">
-        <img
-          :src="userImageIcon"
-          alt="user icon"
-          width="40"
-          height="40"
-          aria-label="Settings"
-        />
-      </button>
+      <a-dropdown :trigger="['click']">
+        <template #overlay>
+          <a-menu  placement="bottomRight" >
+            <a-menu-item key="0" @click="handleLogout">Logout</a-menu-item>
+          </a-menu>
+        </template>
+
+        <button id="user-profile">
+          <img :src="userImageIcon" alt="user icon" width="40" height="40" />
+        </button>
+      </a-dropdown>
     </div>
   </div>
 </template>
 
 <style scoped>
+:deep(.ant-dropdown){
+    font-family: 'Inter', sans-serif;
+}
+
+:deep(.ant-dropdown-menu) {
+  border-radius: 12px;
+  padding: 6px;
+  min-width: 160px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+}
+
+:deep(.ant-dropdown-menu-item) {
+  border-radius: 8px;
+  font-weight: 500;
+  padding: 10px 14px;
+  transition: all 0.2s ease;
+}
+
+:deep(.ant-dropdown-menu-item:hover) {
+  background: #f5f7fa;
+  color: #10355b;
+}
+:deep(.ant-dropdown-menu-item:last-child) {
+  color: #d10000;
+  font-size: 18px;
+}
 .header-time {
   display: flex;
   align-items: center;
   gap: 20px;
 }
 
-
 .header-layout {
   display: flex;
   justify-content: space-between;
   align-items: center;
   gap: 25px;
-  padding: 1rem 2rem;
+  padding: 16px 32px;
   border-bottom: 1px solid #e9eaeb;
   background: #fff;
   position: sticky;
@@ -157,8 +190,7 @@ const closeSearch = () => {
   z-index: 999;
   background: #fff;
   width: 100%;
-    border-bottom: 1px solid #e9eaeb;
-
+  border-bottom: 1px solid #e9eaeb;
 }
 
 .header-settings {

@@ -2,71 +2,91 @@
 import * as XLSX from "xlsx";
 import { computed, onMounted, ref } from "vue";
 import { TableColumn, SearchInput, Pagination, BreadCrumb } from "@/components";
-import { RequestTableData } from "@data/RequestTableData";
 import excelIcon from "@assets/icons/excel.svg";
 import filterIcon from "@assets/icons/filter.svg";
 import addIcon from "@assets/icons/add.svg";
 import Drawer from "@/components/drawer/Drawer.vue";
-import { RequestTableType } from "@/interface/RequestTableType";
+import { typeOrganization, OrganizationResponse } from "@/interface/Organizations";
+import { getOrganizationsData } from "@/services/organization.service";
 
 const columns = [
   { title: "№", dataIndex: "id", key: "id", align: "center" },
-  {
-    title: "Tashkilot nomi",
-    dataIndex: "organizationName",
-    key: "organizationName",
-  },
-
-  { title: "STIR", dataIndex: "IDNumber", key: "IDNumber" },
-  {
-    title: "Hudud",
-    dataIndex: "requirementCount",
-    key: "requirementCount",
-    align: "center",
-  },
-  {
-    title: "Vakolati",
-    dataIndex: "directionCount",
-    key: "directionCount",
-    align: "center",
-  },
-  { title: "", dataIndex: "buttons", key: "actions", align: "center" },
+  { title: "Tashkilot nomi", dataIndex: "name", key: "name" },
+  { title: "STIR", dataIndex: "tin", key: "tin" },
+  { title: "Hudud", dataIndex: "region_name", key: "region_name", align: "center" },
+  { title: "Vakolati", dataIndex: "vacant_position_count", key: "vacant_position_count", align: "center" },
+  { title: "Amallar", dataIndex: "buttons", key: "actions", align: "center" },
 ];
 
 
-const search=ref("")
 const page = ref(1);
-const pageSize = 12;
-const tableData = ref<RequestTableType[]>([...RequestTableData]);
+const pageSize = ref(10);
+const totalCount = ref(0);
 const isLoading = ref(false);
+const search = ref("");
+const organizations = ref<typeOrganization[]>([]);
+
+
+const organizationData = async (currentPage = 1) => {
+  isLoading.value = true;
+  try {
+    const response: OrganizationResponse = await getOrganizationsData(currentPage, pageSize.value);
+
+    console.log(response)
+
+    organizations.value = response.data;
+    totalCount.value = response.total_count;
+    pageSize.value = response.per_page;
+    page.value = response.current_page;
+  } catch (err) {
+    console.error("Xatolik bor:", err);
+    organizations.value = [];
+  } finally {
+    isLoading.value = false;
+  }
+};
 
 onMounted(() => {
-  setTimeout(() => {
-    isLoading.value = false;
-  }, 1500);
+  organizationData();
 });
 
 const filteredData = computed(() => {
-  if (!search.value) return tableData.value;
+  const searchData = search.value.toLowerCase();
+  if (!search.value) return organizations.value;
 
-  return tableData.value.filter(item =>
-    item.organizationName.toLowerCase().includes(search.value.toLowerCase())
+  return organizations.value.filter(
+    (item) =>
+      item.name.toLowerCase().includes(searchData) ||
+      item.region_name.includes(searchData) ||
+      item.tin.includes(searchData)
   );
 });
 
 const paginatedData = computed(() => {
-  const start = (page.value - 1) * page.value;
-  const end = start + pageSize;
-  return filteredData.value.slice(start, end);
+  return filteredData.value;
 });
 
+const handlePageChange = (newPage: number) => {
+  page.value = newPage;
+  organizationData(newPage);
+};
+
+const handleApprove = (record: any) => {
+  record.actionState.confirmed = true;
+  record.actionState.cancelled = false;
+};
+
+const handleReject = (record: any) => {
+  record.actionState.cancelled = true;
+  record.actionState.confirmed = false;
+};
 
 const handleEdit = (record: any) => {
   console.log("Tahrirlash uchun:", record);
 };
 
 const handleDelete = (id: number) => {
-  tableData.value = tableData.value.filter((item) => item.id !== id);
+  organizations.value = organizations.value.filter((item) => item.id !== id);
 };
 
 const isDrawerOpen = ref(false);
@@ -79,10 +99,10 @@ const currentTitle = ref("Tashkilot qo’shish");
 const currentText = ref("STIR");
 
 const exportToExcel = () => {
-  const worksheet = XLSX.utils.json_to_sheet(RequestTableData);
+  const worksheet = XLSX.utils.json_to_sheet(organizations.value);
   const workbook = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(workbook, worksheet, "Organizations");
-  XLSX.writeFile(workbook, "users.xlsx");
+  XLSX.writeFile(workbook, "organizations.xlsx");
 };
 </script>
 
@@ -123,10 +143,10 @@ const exportToExcel = () => {
       />
       <div class="pagination-footer">
         <Pagination
-          :total="tableData.length"
+          :total="filteredData.length"
           :page="page"
-          :page-size="pageSize"
-          @update:page="page = $event"
+          :page-size="pageSize" 
+          @update:page="handlePageChange"
         />
       </div>
     </div>

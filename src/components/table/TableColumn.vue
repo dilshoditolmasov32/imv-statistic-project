@@ -17,23 +17,26 @@ const emit = defineEmits<{
 
 <template>
   <div class="table-container">
-    <div v-if="loading" class="loading-overlay">
-      <Loading />
-    </div>
     <a-table
       :dataSource="data"
       :columns="columns"
+      :loading="{
+        spinning: loading,
+        size: 'large',
+      }"
       :pagination="false"
       :class="{ 'table-loading-blur': loading }"
       bordered
       rowKey="id"
-      :scroll="{ x: 1200 }"
     >
       <template #bodyCell="{ column, record }">
+        <template v-if="column.key === 'created_at'">
+          {{ new Date(record.created_at * 1000).toLocaleString("uz-UZ") }}
+        </template>
         <template v-if="column.key === 'actionState'">
           <slot name="actionContent" :record="record">
             <div
-              v-if="!record.actionState.confirmed && !record.actionState.cancelled"
+              v-if="!record.actionState?.confirmed && !record.actionState?.cancelled"
               class="action-btns"
             >
               <button class="confirm-btn" @click="emit('approve', record)">
@@ -103,12 +106,15 @@ const emit = defineEmits<{
   justify-content: center;
   align-items: center;
   z-index: 100;
-  backdrop-filter: blur(2px); /* Effekt uchun */
+  backdrop-filter: blur(2px);
+  /* Effekt uchun */
 }
 
 .table-loading-blur {
-  filter: blur(1px); /* Yuklanayotganda ma'lumotlarni biroz xira qiladi */
-  pointer-events: none; /* Yuklanayotganda tugmalarni bosib bo'lmaydi */
+  filter: blur(1px);
+  /* Yuklanayotganda ma'lumotlarni biroz xira qiladi */
+  pointer-events: none;
+  /* Yuklanayotganda tugmalarni bosib bo'lmaydi */
 }
 
 .no-hover-change:hover {
@@ -124,6 +130,7 @@ const emit = defineEmits<{
   justify-content: center;
   align-items: center;
 }
+
 :deep(.ant-table-body) {
   overflow-y: auto !important;
 }
